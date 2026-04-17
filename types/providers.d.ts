@@ -5,7 +5,7 @@
 /**
  * API 风格类型
  */
-export type ApiStyle = 'openai' | 'openai_responses' | 'anthropic' | 'gemini';
+export type ApiStyle = 'openai' | 'openai_responses' | 'anthropic' | 'gemini' | 'tavily';
 
 /**
  * 模型获取函数名称

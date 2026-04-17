@@ -28,6 +28,7 @@ import { useConfigStore } from '@/stores/config';
 import { useUiStore } from '@/stores/ui';
 import { useCheckerStore } from '@/stores/checker';
 import { fetchModels } from '@/api';
+import { parseKeys } from '@/utils/keyParser';
 
 const configStore = useConfigStore();
 const uiStore = useUiStore();
@@ -49,7 +50,7 @@ const handleFetchModels = async () => {
     uiStore.isFetchingModels = true; // 设置加载状态
     try {
         // 解析所有输入的 Key
-        const keys = configStore.tokensInput.trim().split(/[,;\n\r]+/).map(k => k.trim()).filter(Boolean);
+        const keys = parseKeys(configStore.tokensInput);
         if (keys.length === 0) {
             uiStore.showToast("请先输入至少一个有效的KEY", "warning");
             return;

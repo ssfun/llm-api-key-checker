@@ -1,20 +1,11 @@
 {
-  "openai": {
-    "label": "OpenAI",
-    "icon": "🤖",
-    "hasBalance": false,
-    "apiStyle": "openai",
-    "defaultBase": "https://api.openai.com/v1",
-    "defaultModel": "gpt-5",
-    "fetchModels": "fetchOpenAIModels"
-  },
   "openai_responses": {
     "label": "OpenAI (Responses API)",
     "icon": "🔬",
     "hasBalance": false,
     "apiStyle": "openai_responses",
     "defaultBase": "https://api.openai.com/v1",
-    "defaultModel": "gpt-5",
+    "defaultModel": "gpt-5.4-mini",
     "fetchModels": "fetchOpenAIModels"
   },
   "anthropic": {
@@ -23,7 +14,7 @@
     "hasBalance": false,
     "apiStyle": "anthropic",
     "defaultBase": "https://api.anthropic.com/v1",
-    "defaultModel": "claude-3-5-haiku-20241022",
+    "defaultModel": "claude-sonnet-4-6",
     "fetchModels": "fetchAnthropicModels"
   },
   "gemini": {
@@ -32,34 +23,43 @@
     "hasBalance": false,
     "apiStyle": "gemini",
     "defaultBase": "https://generativelanguage.googleapis.com",
-    "defaultModel": "gemini-2.5-flash-lite",
+    "defaultModel": "gemini-3.1-flash-lite-preview",
     "fetchModels": "fetchGoogleModels"
   },
-  "cerebras": {
-    "label": "Cerebras",
+  "openai": {
+    "label": "OpenAI",
+    "icon": "🤖",
+    "hasBalance": false,
+    "apiStyle": "openai",
+    "defaultBase": "https://api.openai.com/v1",
+    "defaultModel": "gpt-5-nano",
+    "fetchModels": "fetchOpenAIModels"
+  },
+  "aihubmix": {
+    "label": "Aihubmix",
     "icon": "🐢",
     "hasBalance": false,
     "apiStyle": "openai",
-    "defaultBase": "https://api.cerebras.ai/v1",
-    "defaultModel": "gpt-oss-120b",
+    "defaultBase": "https://aihubmix.com/v1",
+    "defaultModel": "gemini-3.1-flash-lite-preview",
     "fetchModels": "fetchOpenAIModels"
   },
-  "chutes": {
-    "label": "Chutes",
-    "icon": "🐖",
+  "deerapi": {
+    "label": "Deerapi",
+    "icon": "🦌",
     "hasBalance": false,
     "apiStyle": "openai",
-    "defaultBase": "https://llm.chutes.ai/v1",
-    "defaultModel": "openai/gpt-oss-20b",
+    "defaultBase": "https://api.deerapi.com/v1",
+    "defaultModel": "gemini-3.1-flash-lite-preview",
     "fetchModels": "fetchOpenAIModels"
   },
-  "deepinfra": {
-    "label": "Deepinfra",
+  "dmxapi": {
+    "label": "Dmxapi",
     "icon": "👓",
     "hasBalance": false,
     "apiStyle": "openai",
-    "defaultBase": "https://api.deepinfra.com/v1/openai",
-    "defaultModel": "zai-org/GLM-4.5-Air",
+    "defaultBase": "https://www.dmxapi.cn/v1",
+    "defaultModel": "gemini-3.1-flash-lite-preview",
     "fetchModels": "fetchOpenAIModels"
   },
   "deepseek": {
@@ -72,22 +72,22 @@
     "balanceCheck": "checkDeepSeekBalance",
     "fetchModels": "fetchOpenAIModels"
   },
-  "fireworks": {
-    "label": "Fireworks",
+  "nvidia": {
+    "label": "Nvidia",
     "icon": "🔥",
     "hasBalance": false,
     "apiStyle": "openai",
-    "defaultBase": "https://api.fireworks.ai/inference/v1",
-    "defaultModel": "accounts/fireworks/models/glm-4p5-air",
+    "defaultBase": "https://integrate.api.nvidia.com/v1",
+    "defaultModel": "openai/gpt-oss-120b",
     "fetchModels": "fetchOpenAIModels"
   },
-  "friendli": {
-    "label": "Friendli",
+  "jeniya": {
+    "label": "Jeniya",
     "icon": "🦢",
     "hasBalance": false,
     "apiStyle": "openai",
-    "defaultBase": "https://api.friendli.ai/serverless/v1",
-    "defaultModel": "Qwen/Qwen3-32B",
+    "defaultBase": "https://jeniya.top/v1",
+    "defaultModel": "claude-sonnet-4-6",
     "fetchModels": "fetchOpenAIModels"
   },
   "github": {
@@ -114,7 +114,7 @@
     "hasBalance": false,
     "apiStyle": "openai",
     "defaultBase": "https://api-inference.modelscope.cn/v1",
-    "defaultModel": "ZhipuAI/GLM-4.5",
+    "defaultModel": "ZhipuAI/GLM-5",
     "fetchModels": "fetchOpenAIModels"
   },
   "moonshot": {
@@ -133,17 +133,8 @@
     "hasBalance": true,
     "apiStyle": "openai",
     "defaultBase": "https://your.newapi.server/v1",
-    "defaultModel": "gpt-4o-mini",
+    "defaultModel": "gemini-3.1-flash-lite-preview",
     "balanceCheck": "checkNewAPIBalance",
-    "fetchModels": "fetchOpenAIModels"
-  },
-  "novita": {
-    "label": "Novita",
-    "icon": "🐠",
-    "hasBalance": false,
-    "apiStyle": "openai",
-    "defaultBase": "https://api.novita.ai/openai",
-    "defaultModel": "zai-org/glm-4.5",
     "fetchModels": "fetchOpenAIModels"
   },
   "openrouter": {
@@ -183,15 +174,6 @@
     "defaultModel": "qwen-turbo",
     "fetchModels": "fetchOpenAIModels"
   },
-  "sambanova": {
-    "label": "Sambanova",
-    "icon": "🐮",
-    "hasBalance": false,
-    "apiStyle": "openai",
-    "defaultBase": "https://api.sambanova.ai/v1",
-    "defaultModel": "DeepSeek-V3.1",
-    "fetchModels": "fetchOpenAIModels"
-  },
   "siliconflow": {
     "label": "SiliconFlow",
     "icon": "💧",
@@ -202,22 +184,13 @@
     "balanceCheck": "checkSiliconFlowBalance",
     "fetchModels": "fetchOpenAIModels"
   },
-  "together": {
-    "label": "Together",
-    "icon": "🤝",
-    "hasBalance": false,
-    "apiStyle": "openai",
-    "defaultBase": "https://api.together.xyz/v1",
-    "defaultModel": "zai-org/GLM-4.5-Air-FP8",
-    "fetchModels": "fetchOpenAIModels"
-  },
   "xai": {
     "label": "xAI",
     "icon": "🚀",
     "hasBalance": false,
     "apiStyle": "openai",
     "defaultBase": "https://api.x.ai/v1",
-    "defaultModel": "grok-3-latest",
+    "defaultModel": "grok-4-1-fast-non-reasoning",
     "fetchModels": "fetchOpenAIModels"
   },
   "zhipu": {
@@ -226,7 +199,7 @@
     "hasBalance": false,
     "apiStyle": "openai",
     "defaultBase": "https://open.bigmodel.cn/api/paas/v4",
-    "defaultModel": "glm-4.5-air",
+    "defaultModel": "glm-4.7-flash",
     "fetchModels": "fetchOpenAIModels"
   },
   "tavily": {

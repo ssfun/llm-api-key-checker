@@ -1,9 +1,11 @@
 {
   "name": "api-check",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "private": true,
   "scripts": {
     "dev": "vite",
+    "dev:wrangler": "wrangler dev",
+    "dev:full": "npm run build && wrangler dev",
     "build": "vite build",
     "preview": "vite preview",
     "deploy": "npm run build && wrangler deploy"

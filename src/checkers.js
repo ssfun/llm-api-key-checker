@@ -100,7 +100,7 @@ const balanceCheckers = {
 /**
  * @description 统一处理上游 API 的错误响应，提取关键错误信息。
  * @param {Response} response - fetch API 返回的 Response 对象。
- * @returns {Promise<{message: string, rawError: object}>} - 包含格式化消息和原始错误的对象。
+ * @returns {Promise<{message: string, rawError: object, errorCategory: string}>} - 包含格式化消息、原始错误和错误分类的对象。
  */
 async function handleApiError(response) {
     const rawText = await response.text();
@@ -111,13 +111,38 @@ async function handleApiError(response) {
         rawErrorContent = rawText;
     }
     let message;
+    let errorCategory = 'unknown';
     const reason = rawErrorContent?.error?.details?.[0]?.reason;
     const code = rawErrorContent?.error?.code;
+    const errorType = rawErrorContent?.error?.type;
     const errorMessage = rawErrorContent?.error?.message;
     const topLevelMessage = rawErrorContent?.message;
     const detail = rawErrorContent?.detail;
+    const lowerCaseContent = JSON.stringify(rawErrorContent).toLowerCase();
 
-    if (reason) {
+    // 优先级从高到低进行错误分类
+    if (response.status === 401 || code === 'invalid_api_key' || errorType === 'invalid_api_key') {
+        message = "API Key 无效或格式错误";
+        errorCategory = 'invalid_key';
+    } else if (errorType === 'access_terminated' || lowerCaseContent.includes('terminated') || lowerCaseContent.includes('banned')) {
+        message = "账户已被封禁或停用";
+        errorCategory = 'account_banned';
+    } else if (response.status === 402 || code === 'insufficient_quota' || errorType === 'insufficient_quota') {
+        message = "额度不足";
+        errorCategory = 'no_quota';
+    } else if (response.status === 429) {
+        message = "请求频繁 (Rate Limit)";
+        errorCategory = 'rate_limit';
+    } else if (response.status === 403 || lowerCaseContent.includes('permission') || lowerCaseContent.includes('forbidden')) {
+        message = "访问被拒绝 (权限不足)";
+        errorCategory = 'permission_denied';
+    } else if (lowerCaseContent.includes('location') || lowerCaseContent.includes('region') || lowerCaseContent.includes('country')) {
+        message = "区域限制";
+        errorCategory = 'region_blocked';
+    } else if (code === 'model_not_found' || lowerCaseContent.includes('model') && lowerCaseContent.includes('not found')) {
+        message = "模型不存在或不可用";
+        errorCategory = 'model_not_found';
+    } else if (reason) {
         message = String(reason);
     } else if (code && isNaN(code)) {
         message = String(code);
@@ -129,16 +154,13 @@ async function handleApiError(response) {
         message = String(rawErrorContent.errors.message);
     } else if (detail) {
         message = typeof detail === 'object' ? JSON.stringify(detail) : String(detail);
-    } else if (response.status === 401) {
-        message = "认证失败";
-    } else if (response.status === 429) {
-        message = "请求频繁";
     } else {
         message = `HTTP ${response.status}`;
     }
 
     return {
         message,
+        errorCategory,
         rawError: {
             status: response.status,
             content: rawErrorContent,
@@ -276,12 +298,25 @@ const apiStrategies = {
         buildRequest: (token, providerConfig) => {
             const { baseUrl, model, enableStream, validationPrompt, validationMaxOutputTokens } = providerConfig;
             const endpoint = enableStream ? 'streamGenerateContent' : 'generateContent';
-            const streamParam = enableStream ? '?alt=sse' : '';
-            const apiUrl = `${normalizeBaseUrl(baseUrl)}/v1beta/models/${model}:${endpoint}${streamParam}`;
+            const apiUrl = `${normalizeBaseUrl(baseUrl)}/v1beta/models/${model}:${endpoint}`;
             const headers = { "Content-Type": "application/json", "x-goog-api-key": token };
             const body = {
                 contents: [{ parts: [{ text: validationPrompt || "You just need to reply Hi." }] }],
                 generationConfig: { maxOutputTokens: validationMaxOutputTokens || 16 }
+            };
+            return { url: apiUrl, options: { method: "POST", headers, body: JSON.stringify(body) } };
+        }
+    },
+    tavily: {
+        buildRequest: (token, providerConfig) => {
+            const { baseUrl } = providerConfig;
+            const apiUrl = normalizeBaseUrl(baseUrl) + "/search";
+            const headers = { "Content-Type": "application/json" };
+            const body = {
+                api_key: token,
+                query: "test",
+                search_depth: "basic",
+                max_results: 1
             };
             return { url: apiUrl, options: { method: "POST", headers, body: JSON.stringify(body) } };
         }
@@ -302,6 +337,10 @@ async function checkAnthropicToken(token, providerMeta, providerConfig, env) {
 
 async function checkGeminiToken(token, providerMeta, providerConfig, env) {
     return await _checkTokenTemplate(token, providerMeta, providerConfig, env, apiStrategies.gemini);
+}
+
+async function checkTavilyToken(token, providerMeta, providerConfig, env) {
+    return await _checkTokenTemplate(token, providerMeta, providerConfig, env, apiStrategies.tavily);
 }
 
 /**
@@ -327,6 +366,9 @@ export async function checkToken(token, providerMeta, providerConfig, env) {
             break;
         case "gemini":
             checkerFunction = checkGeminiToken;
+            break;
+        case "tavily":
+            checkerFunction = checkTavilyToken;
             break;
         default:
             return { token, isValid: false, message: "不支持的提供商类型", error: true };

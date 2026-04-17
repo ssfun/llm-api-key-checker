@@ -35,17 +35,36 @@ export async function fetchModels(token, providerConfig) {
 }
 
 /**
+ * @description 后端 errorCategory 到前端分类的映射表。
+ */
+const ERROR_CATEGORY_MAP = {
+    'invalid_key': { category: 'invalid', simpleMessage: 'API Key 无效' },
+    'account_banned': { category: 'invalid', simpleMessage: '账户已被封禁或停用' },
+    'no_quota': { category: 'noQuota', simpleMessage: '额度不足' },
+    'rate_limit': { category: 'rateLimit', simpleMessage: '请求频繁' },
+    'permission_denied': { category: 'invalid', simpleMessage: '权限不足' },
+    'region_blocked': { category: 'invalid', simpleMessage: '区域限制' },
+    'model_not_found': { category: 'invalid', simpleMessage: '模型不存在或不可用' },
+};
+
+/**
  * @description 根据 API Key 检测结果的原始响应，将其归类到不同的错误类别。
+ * 优先使用后端返回的 errorCategory，回退到本地解析逻辑。
  * @param {object} res - API Key 检测的原始结果对象。
  * @returns {{category: string, simpleMessage: string}} - 包含分类和简单消息的对象。
  */
 export function categorizeTokenError(res) {
     if (!res || res.isValid) return { category: "valid", simpleMessage: "有效" };
 
+    // 优先使用后端返回的 errorCategory
+    if (res.errorCategory && ERROR_CATEGORY_MAP[res.errorCategory]) {
+        return ERROR_CATEGORY_MAP[res.errorCategory];
+    }
+
+    // 回退：本地解析逻辑（兼容旧数据或后端未分类的情况）
     const { rawError, message } = res;
     const status = rawError?.status || 0;
     const lowerCaseMessage = (message || JSON.stringify(rawError) || "").toLowerCase();
-    // 修复：rawError 的结构是 { status, content }，所以需要从 content 中提取
     const errorContent = rawError?.content || {};
     const errorCode = errorContent?.error?.code || errorContent?.code;
     const errorType = errorContent?.error?.type || errorContent?.type;

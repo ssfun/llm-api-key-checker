@@ -11,6 +11,7 @@ import {
     BUFFER_MAX_SIZE,
     RESULT_CATEGORIES
 } from '@/constants';
+import { parseKeys } from '@/utils/keyParser';
 
 /**
  * @description checker Store 用于管理 API Key 检测的核心逻辑和状态。
@@ -401,7 +402,7 @@ export const useCheckerStore = defineStore('checker', () => {
         resultsStore.clearResults();
         completedCount.value = 0;
 
-        const tokensRaw = configStore.tokensInput.trim().split(/[,;\n\r]+/).map(t => t.trim()).filter(Boolean);
+        const tokensRaw = parseKeys(configStore.tokensInput);
 
         // 检查 Key 数量限制
         if (tokensRaw.length > MAX_KEYS_LIMIT) {
